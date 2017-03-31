@@ -1,4 +1,7 @@
 library(dplyr)
+
+window <- 5
+
 options(stringsAsFactors = F)
 data <- read.csv("data/Workbook1.csv")
 
@@ -44,7 +47,7 @@ for (i in c(paste0("data_",c(1:((ncol(data) - 1) / 2) - 1)))) {
 
 result <- data.frame(name = rep_len(0, ((ncol(data) - 1) / 2)),
                      name = rep_len(0, ((ncol(data) - 1) / 2)))
-window <- 5
+
 j <- 1
 for (i in c(paste0("data_",c(1:((ncol(data) - 1) / 2) - 1)))) {
         temp <- get(i)
