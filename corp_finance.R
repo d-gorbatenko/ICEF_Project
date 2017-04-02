@@ -2,6 +2,7 @@ library(forecast)
 library(dplyr)
 
 window <- 5
+T_0 <- 13
 
 result <- data.frame(name = rep_len(0, ((ncol(data) - 1) / 2)),
                      w0 = rep_len(0, ((ncol(data) - 1) / 2)),
@@ -87,7 +88,7 @@ j <- 1
 for (i in c(paste0("data_",c(1:((ncol(data) - 1) / 2) - 1)))) {
         # выделяем окно
         temp <- get(i)
-        temp.window <- temp[-c(13:(13+window)), ]
+        temp.window <- temp[-c(T_0:(T_0+window)), ]
         temp.window <- temp[-1, ]
         # прогоняем регрессию
         model <- lm(data = temp.window, reten_on_index ~ 1 + reten_on_index_market)
@@ -101,9 +102,9 @@ for (i in c(paste0("data_",c(1:((ncol(data) - 1) / 2) - 1)))) {
         # прогнозируем ретерны
         a <- forecast.lm(object = model, newdata = temp[c(13:(13+window)), ])
         # получаем остатки
-        residuals <- temp[c(13:(13+window)), 4] - a$mean
+        residuals <- temp[c(T_0:(T_0+window)), 4] - a$mean
         # получаем дисперсию остатков
-        sigma_forecast <- sigma_residual + (1 / L_1) * (1 + ((temp[c(13:(13+window)), 5] - mu_market) ** 2) / sigma_market)
+        sigma_forecast <- sigma_residual + (1 / L_1) * (1 + ((temp[c(T_0:(T_0+window)), 5] - mu_market) ** 2) / sigma_market)
         # нормализуем наши остатки и считаем срднее
         temp.var <- mean(na.rm = T, residuals / sigma_forecast)
         
