@@ -2,7 +2,7 @@ library(forecast)
 library(dplyr)
 
 window <- 5
-T_0 <- 13
+T_0 <- 120
 
 result <- data.frame(name = rep_len(0, ((ncol(data) - 1) / 2)),
                      w0 = rep_len(0, ((ncol(data) - 1) / 2)),
@@ -13,7 +13,7 @@ result <- data.frame(name = rep_len(0, ((ncol(data) - 1) / 2)),
                      w5 = rep_len(0, ((ncol(data) - 1) / 2)))
 
 options(stringsAsFactors = F)
-data <- read.csv("data/Workbook1.csv")
+data <- read.csv("data/Workbook2.csv")
 
 for (w in c(0:5)) {
 
@@ -125,8 +125,23 @@ result <-
                w3.pvalue = pnorm(abs(w3), lower.tail = F),
                w4.pvalue = pnorm(abs(w4), lower.tail = F),
                w5.pvalue = pnorm(abs(w5), lower.tail = F))
+result <- 
+        result %>% 
+        mutate(w0.result.001 = ifelse(w0.pvalue < 0.01, "reject H0 at 1% s.l.", "not reject H0 at 1% s.l."),
+               w1.result.001 = ifelse(w1.pvalue < 0.01, "reject H0 at 1% s.l.", "not reject H0 at 1% s.l."),
+               w2.result.001 = ifelse(w2.pvalue < 0.01, "reject H0 at 1% s.l.", "not reject H0 at 1% s.l."),
+               w3.result.001 = ifelse(w3.pvalue < 0.01, "reject H0 at 1% s.l.", "not reject H0 at 1% s.l."),
+               w4.result.001 = ifelse(w4.pvalue < 0.01, "reject H0 at 1% s.l.", "not reject H0 at 1% s.l."),
+               w5.result.001 = ifelse(w5.pvalue < 0.01, "reject H0 at 1% s.l.", "not reject H0 at 1% s.l.")) %>% 
+        
+        mutate(w0.result.005 = ifelse(w0.pvalue < 0.05, "reject H0 at 5% s.l.", "not reject H0 at 5% s.l."),
+               w1.result.005 = ifelse(w1.pvalue < 0.05, "reject H0 at 5% s.l.", "not reject H0 at 5% s.l."),
+               w2.result.005 = ifelse(w2.pvalue < 0.05, "reject H0 at 5% s.l.", "not reject H0 at 5% s.l."),
+               w3.result.005 = ifelse(w3.pvalue < 0.05, "reject H0 at 5% s.l.", "not reject H0 at 5% s.l."),
+               w4.result.005 = ifelse(w4.pvalue < 0.05, "reject H0 at 5% s.l.", "not reject H0 at 5% s.l."),
+               w5.result.005 = ifelse(w5.pvalue < 0.05, "reject H0 at 5% s.l.", "not reject H0 at 5% s.l."))
 
-result
+View(result)
 
-
+xlsx::write.xlsx(result, "data/Results.xlsx", "Results", row.names = F)
 
